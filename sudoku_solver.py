@@ -55,7 +55,7 @@ class SudokuSolver:
             col_candidates = [0] * 10
             box_candidates = [0] * 10
             # for pos, value in row:
-                # if value is None:
-                    # if len(self.candidates[pos[0], pos[1]]) == 1:
+            #     if value is None:
+            #         if len(self.candidates[pos[0], pos[1]]) == 1:
 
         pass

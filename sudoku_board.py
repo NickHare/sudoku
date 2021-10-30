@@ -1,3 +1,6 @@
+from sudoku_position import SudokuPosition
+
+
 class SudokuBoard:
     SIZE = 9
     ROW_SIZE = 9
@@ -13,7 +16,7 @@ class SudokuBoard:
 
         values = {}
         for c in range(self.COL_SIZE):
-            values[(row_num, c)] = self.board[row_num][c]
+            values[SudokuPosition(row_num, c)] = self.board[row_num][c]
         return values
 
     def get_col(self, col_num):
@@ -21,7 +24,7 @@ class SudokuBoard:
 
         values = {}
         for r in range(self.ROW_SIZE):
-            values[(r, col_num)] = self.board[r][col_num]
+            values[SudokuPosition(r, col_num)] = self.board[r][col_num]
         return values
 
     def get_box(self, box_num):
@@ -32,7 +35,7 @@ class SudokuBoard:
         values = {}
         for r in range(self.BOX_SIZE):
             for c in range(self.BOX_SIZE):
-                values[(r, c)] = self.board[row_start + r][col_start + c]
+                values[SudokuPosition(r, c)] = self.board[row_start + r][col_start + c]
         return values
 
     def get_cell(self, row_num, col_num):
@@ -40,9 +43,8 @@ class SudokuBoard:
         assert 0 <= col_num < self.COL_SIZE
         return self.board[row_num][col_num]
 
-    def get_cell_from_pos(self, pos):
-        assert (isinstance(pos, tuple) or isinstance(pos, list)) and len(pos) >= 2
-        return self.get_cell(pos[0], pos[1])
+    def get_cell_from_pos(self, pos: SudokuPosition):
+        return self.get_cell(pos.row_num, pos.col_num)
 
     def set_cell(self, row_num, col_num):
         pass
@@ -88,7 +90,7 @@ class SudokuBoard:
     @classmethod
     def pos_to_box_num(cls, pos):
         assert type(pos) in ('tuple', 'list') and len(pos) >= 2
-        return (pos[0] // cls.BOX_SIZE) * cls.BOX_SIZE + (pos[1] // cls.BOX_SIZE)
+        return (pos.row_num // cls.BOX_SIZE) * cls.BOX_SIZE + (pos.col_num // cls.BOX_SIZE)
 
     def __deepcopy__(self, obj):
         board_copy = []
@@ -98,3 +100,4 @@ class SudokuBoard:
                 row_copy.append(cell)
             board_copy.append(row_copy)
         return board_copy
+
