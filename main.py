@@ -1,25 +1,25 @@
-from sudoku_board import SudokuBoard
-from sudoku_solver import SudokuSolver
+from solver.sudoku_solver import SudokuSolver
+from core.sudoku_board import SudokuBoard
+from core.sudoku_cell import SudokuCell
+from tests import sudoku_test_data as data
 
-t = [
-    [None, None, None, None, None, None, None, None, None],
-    [None, 9, None, 6, None, None, None, None, None],
-    [None, 6, None, None, 7, None, 4, None, 3],
-    [None, None, 2, None, None, 6, None, None, None],
-    [None, None, 8, 1, None, None, None, None, 9],
-    [5, None, None, 2, None, None, None, None, None],
-    [None, None, None, None, 3, None, None, 5, None],
-    [None, None, None, None, 8, 7, None, 2, None],
-    [9, 3, None, None, None, None, None, 4, None]
-]
+sb = SudokuBoard.board_from_numbers(data.TEST_SUDOKU_BOARDS[3])
+print("Starting Board...")
+print(sb)
+print('--------')
+print(f'Valid Board: {sb.validate_board()}')
+print('--------')
 
-sb = SudokuBoard(t)
-v = sb.validate_board()
-print(v)
 ss = SudokuSolver(sb)
-print(ss.candidates)
-can = ss.candidates
-l = [(r, c) for r in range(9) for c in range(9) if can[r][c][0] == True]
-pos = (0, 0)
-print(sb.get_cell_from_pos(pos))
-print()
+step = 0
+while not sb.is_completed():
+    step += 1
+    solution_cells = ss.solve_single_candidate_cells()
+    print("Solving Board...")
+    print(sb)
+    print('--------')
+    print(f'Step: {step}')
+    print(f'Solution Step: {solution_cells}')
+    print(f'Valid Board: {sb.validate_board()}')
+    print('--------')
+print(sb)

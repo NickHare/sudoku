@@ -1,15 +1,14 @@
 import pytest
 
-import sudoku_board_test_data
-from sudoku_board import SudokuBoard
-from sudoku_board import SudokuPosition
+import sudoku_test_data as test_data
+from core.sudoku_board import SudokuBoard
 
 
 @pytest.mark.parametrize("test", [
-    sudoku_board_test_data.VALID_ROW_0_NONES,
-    sudoku_board_test_data.VALID_ROW_0_BASIC_INC,
-    sudoku_board_test_data.VALID_ROW_0_BASIC_DEC,
-    sudoku_board_test_data.VALID_ROW_0_STAG_INC,
+    test_data.VALID_ROW_0_NONES,
+    test_data.VALID_ROW_0_BASIC_INC,
+    test_data.VALID_ROW_0_BASIC_DEC,
+    test_data.VALID_ROW_0_STAG_INC,
 ])
 def test_validate_values_valid(test):
     expected = True
