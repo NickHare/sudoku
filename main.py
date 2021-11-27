@@ -3,7 +3,7 @@ from core.sudoku_board import SudokuBoard
 from core.sudoku_cell import SudokuCell
 from tests import sudoku_test_data as data
 
-sb = SudokuBoard.board_from_numbers(data.TEST_SUDOKU_BOARDS[3])
+sb = SudokuBoard.board_from_numbers(data.TEST_SUDOKU_BOARDS[7])
 print("Starting Board...")
 print(sb)
 print('--------')
