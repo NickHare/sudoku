@@ -1,5 +1,6 @@
 from core.sudoku_cell import SudokuCell
 
+
 class SudokuCellCandidates:
 
     def __init__(self, cell_candidates: list[bool]) -> None:
@@ -18,6 +19,13 @@ class SudokuCellCandidates:
 
     def is_single_candidate_cell(self) -> bool:
         return self.candidate_count == 1 and self.cell_candidates[0]
+
+    def remove_candidate(self, cell: SudokuCell) -> bool:
+        assert self.candidate_count > 1
+        is_removed = self.cell_candidates[cell]
+        self.cell_candidates[cell] = False
+        self.candidate_count -= 1
+        return is_removed
 
     def __str__(self) -> str:
         return f'Cell Candidates: {[SudokuCell(value) for value in range(1, len(self.cell_candidates)) if self.cell_candidates[value]]}'

@@ -7,6 +7,7 @@ from core.sudoku_cell import SudokuCell
 from solver.sudoku_cell_candidates import SudokuCellCandidates
 from solver.sudoku_group_candidates import SudokuGroupCandidates
 
+
 class SudokuSolver:
 
     def __init__(self, board: SudokuBoard) -> None:
@@ -84,6 +85,22 @@ class SudokuSolver:
                             group_candidates[cell] = [pos]
         return SudokuGroupCandidates(group_candidates)
 
+    def eliminate_extra_candidates(self):
+        for group_num in SudokuGroup.GROUP_NUM_RANGE:
+            row_candidates = self.group_candidates_board[SudokuGroupType.ROW][group_num]
+            col_candidates = self.group_candidates_board[SudokuGroupType.COL][group_num]
+            box_candidates = self.group_candidates_board[SudokuGroupType.BOX][group_num]
+
+            for num in SudokuCell.VALUE_NUM_RANGE:
+                cell = SudokuCell(num)
+                if len(row_candidates[cell]) == 2:
+                    print(f'Pair locates: ROW {group_num}, CellValue {cell}, Positions: {row_candidates[cell]}')
+                if len(col_candidates[cell]) == 2:
+                    print(f'Pair locates: COL {group_num}, CellValue {cell}, Positions: {col_candidates[cell]}')
+                if len(box_candidates[cell]) == 2:
+                    print(f'Pair locates: BOX {group_num}, CellValue {cell}, Positions: {box_candidates[cell]}')
+        pass
+
     def solve_single_candidate_cells(self) -> list[(SudokuPosition, SudokuCell)]:
         solution_history_step = []
         for pos, cell in self.solvable_cells.items():
@@ -96,6 +113,7 @@ class SudokuSolver:
         self.solution_history.append(solution_history_step)
         self.cell_candidates_board = self.gather_all_cell_candidates()
         self.group_candidates_board = self.gather_all_group_candidates()
+        self.eliminate_extra_candidates()
         self.solvable_cells = self.gather_solvable_cells()
         return solution_history_step
 
