@@ -1,15 +1,15 @@
-import sudoku_config as config
+import sudoku.config as config
 
 
-class SudokuPosition:
+class Position:
 
     def __init__(self, row_num: int, col_num: int):
-        assert 0 <= row_num < config.ROW_SIZE
-        assert 0 <= col_num < config.COL_SIZE
+        assert isinstance(row_num, int) and 0 <= row_num < config.ROW_SIZE
+        assert isinstance(row_num, int) and 0 <= col_num < config.COL_SIZE
         self.row_num = row_num
         self.col_num = col_num
 
-    def __eq__(self, other: 'SudokuPosition') -> bool:
+    def __eq__(self, other: 'Position') -> bool:
         return self.row_num == other.row_num and self.col_num == other.col_num
 
     def __hash__(self) -> int:

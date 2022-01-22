@@ -1,5 +1,6 @@
 import sudoku_config as config
 from core.sudoku_position import SudokuPosition
+from core.sudoku_value import SudokuValue
 from core.sudoku_cell import SudokuCell
 from core.sudoku_group import SudokuGroup
 from core.sudoku_group import SudokuGroupType
@@ -8,9 +9,12 @@ from core.sudoku_group import SudokuGroupType
 class SudokuBoard:
 
     @classmethod
-    def board_from_numbers(cls, num_board: list):
+    def board_from_numbers(cls, num_board: list[int]):
         assert len(num_board) == config.ROW_SIZE
-        board = [[SudokuCell(num) for num in row] for row in num_board]
+        for row in num_board:
+            assert len(row) == config.COL_SIZE
+
+        board = [[SudokuCell(SudokuPosition(row, col), SudokuValue(num_board[row][col])) for col in range(config.COL_SIZE)] for row in range(config.ROW_SIZE)]
         return cls(board)
 
     def __init__(self, board: list[SudokuCell]):
@@ -45,18 +49,21 @@ class SudokuBoard:
         elif group_type == SudokuGroupType.BOX:
             pos_list = SudokuGroup.get_box_positions(group_num)
 
-        group = {}
+        group_cells = []
         for pos in pos_list:
-            group[pos] = self.board[pos.row_num][pos.col_num]
+            group_cells.append(self.board[pos.row_num][pos.col_num])
 
-        return SudokuGroup(group_type, group_num, group)
+        return SudokuGroup(group_type, group_num, group_cells)
 
     def get_cell(self, pos: SudokuPosition) -> SudokuCell:
         return self.board[pos.row_num][pos.col_num]
 
-    def set_cell(self, pos: SudokuPosition, cell: SudokuCell) -> bool:
+    def set_cell(self, cell: SudokuCell) -> bool:
         is_set = True
-        if cell.is_empty() or self.board[pos.row_num][pos.col_num].is_set():
+        val = cell.val
+        pos = cell.pos
+        current_cell = self.get_cell(pos)
+        if val.is_empty() or current_cell.is_set():
             is_set = False
         else:
             row = self.get_row(pos.row_num)
@@ -94,7 +101,7 @@ class SudokuBoard:
         for n in range(config.BOX_SIZE):
             for m in range(config.BOX_SIZE):
                 row = self.get_row(n*config.BOX_SIZE + m)
-                values = row.get_cells()
+                values = [cell.val for cell in row.get_cells()]
                 values.insert(0, '|')
                 values.insert(4, '|')
                 values.insert(8, '|')

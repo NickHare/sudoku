@@ -14,7 +14,7 @@ EMPTY_BOARD = [
 ]
 
 TEST_SUDOKU_BOARDS = [
-    [  # Random Sheet Easy
+    [  # 0, Random Sheet Easy
         [None, None, None, None, None, None, None, None, None],
         [None, 9, None, 6, None, None, None, None, None],
         [None, 6, None, None, 7, None, 4, None, 3],
@@ -25,7 +25,7 @@ TEST_SUDOKU_BOARDS = [
         [None, None, None, None, 8, 7, None, 2, None],
         [9, 3, None, None, None, None, None, 4, None]
     ],
-    [  # Random Sheet Moderate
+    [  # 1, Random Sheet Moderate
         [5, None, None, 1, None, None, None, None, None],
         [None, 3, None, None, None, 6, None, None, None],
         [None, None, None, 4, None, None, None, None, 7],
@@ -35,7 +35,7 @@ TEST_SUDOKU_BOARDS = [
         [2, 4, None, None, None, 1, None, None, 6],
         [8, None, None, None, 6, None, 7, None, 1],
         [None, 7, 1, None, None, None, 8, 2, None]
-    ], [  # Sudoku.com Hard
+    ], [  # 2, Sudoku.com Hard
         [None, None, 3, 6, None, None, None, None, 7],
         [None, None, None, None, None, None, None, 1, 5],
         [None, 5, None, None, 7, None, 6, 8, None],
@@ -45,8 +45,7 @@ TEST_SUDOKU_BOARDS = [
         [None, 4, None, None, None, None, None, None, None],
         [7, None, None, None, None, None, 3, None, 9],
         [8, None, 1, None, None, 4, 2, None, None],
-    ],
-    [  # Sudoku.com Hard
+    ], [  # 3, Sudoku.com Hard
         [6, None, None, None, None, 2, 1, None, None],
         [None, 3, 2, 9, None, None, None, 7, None],
         [None, None, None, None, None, 8, None, None, None],
@@ -56,7 +55,7 @@ TEST_SUDOKU_BOARDS = [
         [None, None, 4, None, None, None, 6, None, None],
         [1, 2, None, 7, None, None, None, None, 5],
         [None, None, None, None, None, None, None, 9, 4]
-    ], [  # Sudoku.com Hard
+    ], [  # 4, Sudoku.com Hard
         [None, 4, None, None, None, 5, 6, None, 2],
         [None, None, None, 9, None, None, None, None, None],
         [None, None, None, None, None, 8, 5, 4, None],
@@ -66,7 +65,7 @@ TEST_SUDOKU_BOARDS = [
         [7, 8, 3, 2, 6, None, None, None, None],
         [None, None, None, None, None, None, None, None, None],
         [6, None, 5, None, 7, 3, None, None, None]
-    ], [  # Sudoku.com Expert
+    ], [  # 5, Sudoku.com Expert
         [None, None, 4, None, None, None, None, 5, None],
         [2, None, None, None, 5, 1, None, None, None],
         [9, None, None, None, None, None, 6, None, None],
@@ -76,7 +75,7 @@ TEST_SUDOKU_BOARDS = [
         [None, None, None, None, None, 8, None, None, 4],
         [None, None, None, None, None, None, 7, 6, 3],
         [None, None, None, 2, None, 4, None, None, 9]
-    ], [  # Sudoku.com Expert
+    ], [  # 6, Sudoku.com Expert
         [5, None, None, 4, None, None, None, None, None],
         [None, None, 2, None, None, None, None, None, 6],
         [None, None, 7, None, 8, 3, None, 5, None],
@@ -86,7 +85,17 @@ TEST_SUDOKU_BOARDS = [
         [9, 2, None, None, 7, None, None, None, None],
         [8, None, None, None, None, None, None, None, None],
         [4, None, 3, None, None, None, 1, None, None]
-    ], [  # Sudoku.com Evil
+    ], [  # 7 Sudoku.com Expert
+        [None, None, None, 7, 9, 8, None, None, None],
+        [None, None, None, None, 1, None, 2, 5, None],
+        [None, None, None, None, 2, None, 3, None, None],
+        [7, None, 9, None, None, None, None, None, 2],
+        [None, None, None, None, None, None, None, 7, None],
+        [None, None, 8, None, None, 1, None, 9, None],
+        [None, 5, None, None, None, None, 4, None, 6],
+        [2, None, None, None, None, 6, None, None, None],
+        [None, 1, None, 8, None, None, None, None, None]
+    ], [  # 8, Sudoku.com Evil
         [None, None, None, None, None, 5, None, 9, None],
         [None, None, 6, 8, 9, None, None, None, 4],
         [8, None, None, None, None, 7, None, None, None],
@@ -152,20 +161,22 @@ TEST_SUDOKU_BOARD_SOLUTIONS = [
         [2, 9, 4, 5, 8, 1, 7, 6, 3],
         [6, 1, 5, 4, 7, 3, 9, 2, 8]
     ], [  # Unknown Expert
+    ], [  # Unknown Expert
+    ], [  # Unknown Expert
     ], [  # Unknown Evil
     ]
 ]
 
-TEST_SUDOKU_BOARD = [
-    [4, 8, 5, 3, 1, 9, 7, 6, 2],
-    [7, 9, 3, 6, 2, 4, 8, 1, 5],
-    [2, 6, 1, 8, 7, 5, 4, 9, 3],
-    [3, 1, 2, 7, 9, 6, 5, 8, 4],
-    [6, 4, 8, 1, 5, 3, 2, 7, 9],
-    [5, 7, 9, 2, 4, 8, 6, 3, 1],
-    [8, 2, 6, 4, 3, 1, 9, 5, 7],
-    [1, 5, 4, 9, 8, 7, 3, 2, 6],
-    [9, 3, 7, 5, 6, 2, 1, 4, 8]
+TEST_SUDOKU_BOARD = [  # 6, Sudoku.com Expert
+        [5, None, None, 4, None, None, None, None, None],
+        [None, None, 2, None, None, None, None, None, 6],
+        [None, None, 7, None, 8, 3, None, 5, None],
+        [None, None, 5, None, None, None, None, 7, None],
+        [2, None, None, None, 6, None, 8, 3, 5],
+        [None, None, None, 5, 9, None, None, 6, None],
+        [9, 2, None, None, 7, None, None, None, None],
+        [8, None, None, None, None, None, None, None, None],
+        [4, None, 3, None, None, None, 1, None, None]
 ]
 
 VALID_ROW_0_NONES = {
