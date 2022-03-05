@@ -1,32 +1,32 @@
 import pytest
 from sudoku.core.position import Position
+from tests.sudoku.core.position_data import PositionData
 
 
-@pytest.mark.parametrize("test_pair", [
-    (0, 0), (0, 1), (1, 0), (4, 5), (5, 4), (5, 5), (5, 6), (6, 5), (7, 8), (8, 7), (8, 8)
-])
-def test_valid_positions(test_pair):
-    actual = Position(test_pair[0], test_pair[1])
-    assert actual.row_num == test_pair[0]
-    assert actual.col_num == test_pair[1]
-
-
-@pytest.mark.parametrize("test_pair", [
-    (-5, -5), (-1, -1), (-5, 0), (0, -5), (-1, 0), (0, -1),
-    (-1, 5), (5, -1), (5, 9), (9, 5), (9, 8), (8, 9), (9, 9), (15, 15),
-    ("", ""), ("1", "1"), ([], []), ({}, {})
-])
-def test_invalid_positions(test_pair):
+@pytest.mark.parametrize("test_row_num, test_col_num", PositionData.INVALID_TYPE_POSITION_ARGS)
+def test_invalid_type_positions(test_row_num, test_col_num):
     with pytest.raises(AssertionError):
-        actual = Position(test_pair[0], test_pair[1])
+        actual_position = Position(test_row_num, test_col_num)
 
 
-@pytest.mark.parametrize("test_pos, test_row, test_col", [
-    (Position(0, 0), 0, 0), (Position(0, 1), 0, 1), (Position(1, 0), 1, 0),
-    (Position(1, 1), 1, 1), (Position(5, 5), 5, 5), (Position(7, 8), 7, 8),
-    (Position(8, 7), 8, 7), (Position(8, 8), 8, 8)
-])
-def test_equal_positions(test_pos, test_row, test_col):
-    actual = Position(test_row, test_col)
-    assert actual == test_pos
+@pytest.mark.parametrize("test_row_num, test_col_num", PositionData.OUT_OF_RANGE_POSITION_ARGS)
+def test_out_of_range_positions(test_row_num, test_col_num):
+    with pytest.raises(AssertionError):
+        actual_position = Position(test_row_num, test_col_num)
+
+
+@pytest.mark.parametrize("test_row_num, test_col_num", PositionData.VALID_POSITION_ARGS)
+def test_valid_positions(test_row_num, test_col_num):
+    actual_position = Position(test_row_num, test_col_num)
+    assert actual_position == Position(test_row_num, test_col_num)
+    assert actual_position.row_num == test_row_num
+    assert actual_position.col_num == test_col_num
+
+
+def test_position_order():
+    pos_list = PositionData.ORDERED_POSITIONS
+    for i in range(len(pos_list) - 1):
+        assert pos_list[i] < pos_list[i + 1]
+    for i in range(len(pos_list) - 1, 0, -1):
+        assert pos_list[i] > pos_list[i - 1]
 

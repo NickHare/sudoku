@@ -1,43 +1,54 @@
 import pytest
 
 from sudoku.core.value import Value
+from tests.sudoku.core.value_data import ValueData
 
 
-@pytest.mark.parametrize("test_num", [None, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+@pytest.mark.parametrize("test_num", ValueData.INVALID_TYPE_VALUE_ARGS)
+def test_invalid_type_values(test_num):
+    with pytest.raises(AssertionError):
+        actual_value = Value(test_num)
+
+
+@pytest.mark.parametrize("test_num", ValueData.OUT_OF_RANGE_VALUE_ARGS)
+def test_out_of_range_values(test_num):
+    with pytest.raises(AssertionError):
+        actual_value = Value(test_num)
+
+
+@pytest.mark.parametrize("test_num", ValueData.VALID_VALUE_ARGS)
 def test_valid_values(test_num):
     actual = Value(test_num)
+    assert actual == Value(test_num)
     assert actual.num == test_num
     assert actual.is_set() or actual.is_empty()
+    assert test_num in Value.NUM_RANGE or test_num == Value.EMPTY_NUM
+    assert actual in Value.VALUE_RANGE or actual == Value.EMPTY_VALUE
 
 
-@pytest.mark.parametrize("test_num", [1, 2, 3, 4, 5, 6, 7, 8, 9])
-def test_valid_set_values(test_num):
+@pytest.mark.parametrize("test_num", ValueData.SET_VALUE_ARGS)
+def test_set_values(test_num):
     actual = Value(test_num)
+    assert actual == Value(test_num)
     assert actual.num == test_num
-    assert actual.is_set()
-    assert not actual.is_empty()
+    assert actual.is_set() and not actual.is_empty()
     assert test_num in Value.NUM_RANGE
     assert actual in Value.VALUE_RANGE
 
 
-def test_valid_none_value():
-    actual = Value(None)
+@pytest.mark.parametrize("test_num", ValueData.EMPTY_VALUE_ARGS)
+def test_empty_values(test_num):
+    actual = Value(test_num)
+    assert actual == Value(test_num)
     assert actual.num is None
-    assert not actual.is_set()
-    assert actual.is_empty()
+    assert not actual.is_set() and actual.is_empty()
+    assert test_num == Value.EMPTY_NUM
     assert actual == Value.EMPTY_VALUE
 
 
-@pytest.mark.parametrize("test_num", [-10, -1, 0, 10, 11, 100, 1.5, "", "1", [], {}])
-def test_invalid_values(test_num):
-    with pytest.raises(AssertionError):
-        actual = Value(test_num)
-
-
-@pytest.mark.parametrize("test_value, test_num", [
-    (Value(None), None), (Value(1), 1), (Value(2), 2), (Value(3), 3), (Value(4), 4),
-    (Value(5), 5), (Value(6), 6), (Value(7), 7), (Value(8), 8), (Value(9), 9)
-])
-def test_values_equal(test_value, test_num):
-    actual = Value(test_num)
-    assert actual == test_value
+def test_value_order():
+    val_list = ValueData.ORDERED_VALUES
+    for i in range(len(val_list) - 1):
+        assert val_list[i] < val_list[i + 1]
+    for i in range(len(val_list) - 1, 0, -1):
+        assert val_list[i] > val_list[i - 1]
