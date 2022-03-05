@@ -1,25 +1,25 @@
-from solver.sudoku_solver import SudokuSolver
-from core.sudoku_board import SudokuBoard
-from tests import sudoku_test_data as data
+from tests.sudoku.core.board_data import BoardData
 
-sb = SudokuBoard.board_from_numbers(data.TEST_SUDOKU_BOARDS[5])
-# sb = SudokuBoard.board_from_numbers(data.TEST_SUDOKU_BOARD)
-print("Starting Board...")
-print(sb)
-print('--------')
-print(f'Valid Board: {sb.validate_board()}')
-print('--------')
+from sudoku.core.board import Board
+from sudoku.core.group import Group
+from sudoku.core.group import GroupType
+from sudoku.core.cell import Cell
+from sudoku.core.value import Value
+from sudoku.core.position import Position
 
-ss = SudokuSolver(sb)
-step = 0
-while not sb.is_completed():
-    step += 1
-    solution_cells = ss.solve_single_candidate_cells()
-    print("Solving Board...")
-    print(sb)
-    print('--------')
-    print(f'Step: {step}')
-    print(f'Solution Step: {solution_cells}')
-    print(f'Valid Board: {sb.validate_board()}')
-    print('--------')
-print(sb)
+board = Board(BoardData.VALID_PARTIAL_BOARD_ARGS[0])
+print(board)
+row = board.rows[1]
+col = board.cols[0]
+box = board.boxes[0]
+cell = Cell(Position(1, 0), Value(9))
+board.set_cell(cell)
+print(board)
+row = board.rows[1]
+col = board.cols[0]
+box = board.boxes[0]
+cell = Cell(Position(1, 2), Value(9))
+board.set_cell(cell)
+print(board)
+row = board.rows[1]
+print(row)
