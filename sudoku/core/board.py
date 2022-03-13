@@ -71,6 +71,9 @@ class Board:
         self.boxes[box_num] = self.gather_group(GroupType.BOX, box_num)
         self.conflicts = self.gather_conflicts()
 
+    def is_valid(self):
+        return self.conflicts == []
+
     def is_completed(self) -> bool:
         is_completed = self.conflicts == []
         for row in self.board:

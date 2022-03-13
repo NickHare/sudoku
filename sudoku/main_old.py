@@ -1,4 +1,4 @@
-from solver.solver import Solver
+from solver.board_solver import BoardSolver
 from core.board import Board
 from tests.sudoku.core.board_data import BoardData
 
@@ -10,7 +10,7 @@ print('--------')
 print(f'Valid Board: {b.conflicts}')
 print('--------')
 
-s = Solver(b)
+s = BoardSolver(b)
 step = 0
 while not b.is_completed():
     step += 1

@@ -1,47 +1,36 @@
+from sudoku.core.position import Position
 from sudoku.core.value import Value
 
 
 class CellCandidates:
 
-    def __init__(self, cell_candidates: list[bool]) -> None:
-        self.candidates = cell_candidates
-        self.candidate_counts = 0
-        for value_index in Value.NUM_RANGE:
-            if self.candidates[value_index]:
-                value = Value(value_index)
-                self.candidate_counts += 1
-                self.single_candidate_value = value
-        assert self.candidate_counts > 0
-        self.candidates[0] = True if self.candidate_counts == 1 else False
-        self.single_candidate_value = self.single_candidate_value if self.candidate_counts == 1 else None
+    @staticmethod
+    def validate_cell_candidate_args(pos: Position, candidate_values: list[Value]) -> None:
+        assert candidate_values > 0
+        assert sorted(candidate_values) == sorted(list(set(candidate_values)))
 
-    def is_candidate_value(self, value: Value) -> bool:
-        value_index = value.num
-        return self.candidates[value_index]
+    def __init__(self, pos: Position, candidate_values: list[Value]) -> None:
+        self.pos = pos
+        self.candidate_values = candidate_values
+        self.candidate_count = len(candidate_values)
 
     def is_single_candidate_cell(self) -> bool:
-        return self.candidate_counts == 1 and self.candidates[0]
+        return self.candidate_count == 1
 
-    def get_candidate_values(self) -> list[Value]:
-        return [Value(num) for num in Value.NUM_RANGE if self.candidates[num]]
+    def get_single_candidate_value(self):
+        return self.candidate_values[0] if self.is_single_candidate_cell() else None
 
     def remove_candidate_value(self, value: Value) -> bool:
-        assert self.candidate_counts >= 1
-        is_removed = False
-        if self.candidates[value.num]:
-            self.candidate_counts -= 1
-            self.candidates[value.num] = False
-            is_removed = True
+        if value in self.candidate_values:
+            assert self.candidate_count > 1
+            self.candidate_values.remove(value)
+            self.candidate_count -= 1
 
-            if self.candidate_counts == 1:
-                self.candidates[0] = True
-                for num in Value.NUM_RANGE:
-                    if self.candidates[num]:
-                        self.single_candidate_value = Value(num)
-        return is_removed
+    def __contains__(self, item):
+        return item in self.candidate_values
 
     def __str__(self) -> str:
-        return f'Cell Candidates: {[Value(num) for num in Value.NUM_RANGE if self.candidates[num]]}'
+        return f'{self.pos}: {self.candidate_values}'
 
     def __repr__(self) -> str:
         return self.__str__()
