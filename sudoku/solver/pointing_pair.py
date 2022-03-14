@@ -33,11 +33,12 @@ class PointingPair:
         self.eliminated_candidates = sorted(eliminated_candidates)
 
     def __eq__(self, other):
+        if not isinstance(other, PointingPair):
+            return False
         is_equal = self.group_type == other.group_type
         is_equal &= self.group_num == other.group_num
         is_equal &= sorted(self.positions) == sorted(other.positions)
-        is_equal &= self.values == other.value
-        is_equal &= sorted(self.eliminated_candidates) == sorted(other.eliminated_candidates)
+        is_equal &= self.value == other.value
         return is_equal
 
     def __str__(self):

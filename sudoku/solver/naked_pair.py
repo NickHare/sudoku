@@ -28,11 +28,12 @@ class NakedPair:
         self.eliminated_candidates = sorted(eliminated_candidates)
 
     def __eq__(self, other):
+        if not isinstance(other, NakedPair):
+            return False
         is_equal = self.group_type == other.group_type
         is_equal &= self.group_num == other.group_num
         is_equal &= sorted(self.positions) == sorted(other.positions)
         is_equal &= sorted(self.values) == sorted(other.values)
-        is_equal &= sorted(self.eliminated_candidates) == sorted(other.eliminated_candidates)
         return is_equal
 
     def __str__(self):

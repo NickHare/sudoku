@@ -6,7 +6,7 @@ class CellCandidates:
 
     @staticmethod
     def validate_cell_candidate_args(pos: Position, candidate_values: list[Value]) -> None:
-        assert candidate_values > 0
+        assert len(candidate_values) > 0
         assert sorted(candidate_values) == sorted(list(set(candidate_values)))
 
     def __init__(self, pos: Position, candidate_values: list[Value]) -> None:

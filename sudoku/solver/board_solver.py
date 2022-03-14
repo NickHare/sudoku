@@ -78,7 +78,8 @@ class BoardSolver:
 
     def remove_extra_candidates(self):
         removed_candidates = []
-        while True:
+        has_removed_candidates = True
+        while has_removed_candidates:
             removed_candidates_step = []
             for group_num in Group.GROUP_NUM_RANGE:
                 row = self.board.rows[group_num]
@@ -95,9 +96,11 @@ class BoardSolver:
                 removed_candidates_step += self.remove_hidden_pair_extra_candidates(box)
                 removed_candidates_step += self.remove_naked_pair_extra_candidates(box)
                 removed_candidates_step += self.remove_pointing_pair_extra_candidates(box)
-            if not removed_candidates_step:
-                break
-            removed_candidates += removed_candidates_step
+            has_removed_candidates = False
+            for removed_candidate in removed_candidates_step:
+                if removed_candidate not in removed_candidates:
+                    removed_candidates.append(removed_candidate)
+                    has_removed_candidates = True
         return removed_candidates
 
     def remove_hidden_pair_extra_candidates(self, group: Group) -> list[HiddenPair]:
@@ -123,7 +126,8 @@ class BoardSolver:
                             for cell in removed_candidate_cells:
                                 if cell.pos == pos:
                                     cell_candidates.remove_candidate_value(cell.val)
-                        hidden_pairs.append(HiddenPair(group.type, group.num, (first_candidate_positions[0], first_candidate_positions[1]), (first_candidate_value, second_candidate_value), removed_candidate_cells))
+                        if removed_candidate_cells:
+                            hidden_pairs.append(HiddenPair(group.type, group.num, (first_candidate_positions[0], first_candidate_positions[1]), (first_candidate_value, second_candidate_value), removed_candidate_cells))
             for hidden_pair in hidden_pairs:
                 for candidate_cell in hidden_pair.eliminated_candidates:
                     group_candidates.remove_group_candidate(candidate_cell)
@@ -160,7 +164,8 @@ class BoardSolver:
                                     cell_candidates.remove_candidate_value(removed_cell.val)
                                     group_candidates.remove_group_candidate(removed_cell)
                                     removed_candidate_cells.append(removed_cell)
-                        naked_pairs.append(NakedPair(group.type, group.num, (first_candidate_pos, second_candidate_pos), (first_candidate_values[0], first_candidate_values[1]), removed_candidate_cells))
+                        if removed_candidate_cells:
+                            naked_pairs.append(NakedPair(group.type, group.num, (first_candidate_pos, second_candidate_pos), (first_candidate_values[0], first_candidate_values[1]), removed_candidate_cells))
         return naked_pairs
 
     def remove_pointing_pair_extra_candidates(self, box_group: Group) -> list[PointingPair]:
@@ -177,7 +182,8 @@ class BoardSolver:
                 row_candidate_value_positions = row_candidates.get_positions_for_candidate_value(candidate_value)
                 if len(row_candidate_value_positions) > 2:
                     removed_candidate_cells = [Cell(pos, candidate_value) for pos in row_candidate_value_positions if pos not in pair_positions]
-                    pointing_pairs.append(PointingPair(box_group.type, box_group.num, (pair_positions[0], pair_positions[1]), candidate_value, removed_candidate_cells))
+                    if removed_candidate_cells:
+                        pointing_pairs.append(PointingPair(box_group.type, box_group.num, (pair_positions[0], pair_positions[1]), candidate_value, removed_candidate_cells))
                     for cell in removed_candidate_cells:
                         self.board_cell_candidates[cell.pos.row_num][cell.pos.col_num].remove_candidate_value(cell.val)
                         row_candidates.remove_group_candidate(cell)
@@ -187,7 +193,8 @@ class BoardSolver:
                 col_candidate_value_positions = col_candidates.get_positions_for_candidate_value(candidate_value)
                 if len(col_candidate_value_positions) > 2:
                     removed_candidate_cells = [Cell(pos, candidate_value) for pos in col_candidate_value_positions if pos not in pair_positions]
-                    pointing_pairs.append(PointingPair(box_group.type, box_group.num, (pair_positions[0], pair_positions[1]), candidate_value, removed_candidate_cells))
+                    if removed_candidate_cells:
+                        pointing_pairs.append(PointingPair(box_group.type, box_group.num, (pair_positions[0], pair_positions[1]), candidate_value, removed_candidate_cells))
                     for cell in removed_candidate_cells:
                         self.board_cell_candidates[cell.pos.row_num][cell.pos.col_num].remove_candidate_value(cell.val)
                         col_candidates.remove_group_candidate(cell)
@@ -207,7 +214,8 @@ class BoardSolver:
                 box_candidate_value_positions = box_candidates.get_positions_for_candidate_value(candidate_value)
                 if len(box_candidate_value_positions) > 2:
                     removed_candidate_cells = [Cell(pos, candidate_value) for pos in box_candidate_value_positions if pos not in pair_positions]
-                    boxed_pairs.append(BoxedPair(group.type, group.num, (pair_positions[0], pair_positions[1]), candidate_value, removed_candidate_cells))
+                    if removed_candidate_cells:
+                        boxed_pairs.append(BoxedPair(group.type, group.num, (pair_positions[0], pair_positions[1]), candidate_value, removed_candidate_cells))
                     for cell in removed_candidate_cells:
                         self.board_cell_candidates[cell.pos.row_num][cell.pos.col_num].remove_candidate_value(cell.val)
                         box_candidates.remove_group_candidate(cell)
@@ -216,22 +224,25 @@ class BoardSolver:
     def solve_single_candidate_cells(self) -> list[Cell]:
         solution_history_step = []
         for cell in self.solvable_cells:
+            solution_history_step.append(cell)
             self.board.set_cell(cell)
+            self.board_cell_candidates[cell.pos.row_num][cell.pos.col_num] = CellCandidates(cell.pos, [cell.val])
+
             row_num = cell.pos.row_num
             col_num = cell.pos.col_num
             box_num = Group.pos_to_box_num(cell.pos)
             for pos in Group.get_row_positions(row_num):
-                group_candidate_cell = Cell(pos, cell.val)
-                self.board_group_candidates[GroupType.ROW][row_num].remove_group_candidate(group_candidate_cell)
+                if pos != cell.pos:
+                    self.board_cell_candidates[pos.row_num][pos.col_num].remove_candidate_value(cell.val)
             for pos in Group.get_col_positions(col_num):
-                group_candidate_cell = Cell(pos, cell.val)
-                self.board_group_candidates[GroupType.COL][col_num].remove_group_candidate(group_candidate_cell)
+                if pos != cell.pos:
+                    self.board_cell_candidates[pos.row_num][pos.col_num].remove_candidate_value(cell.val)
             for pos in Group.get_box_positions(box_num):
-                group_candidate_cell = Cell(pos, cell.val)
-                self.board_group_candidates[GroupType.BOX][box_num].remove_group_candidate(group_candidate_cell)
-            solution_history_step.append(cell)
+                if pos != cell.pos:
+                    self.board_cell_candidates[pos.row_num][pos.col_num].remove_candidate_value(cell.val)
             print(f'Set {cell}')
         self.solution_history.append(solution_history_step)
+        self.board_group_candidates = self.gather_board_group_candidates()
         self.removed_candidates = self.remove_extra_candidates()
         self.solvable_cells = self.gather_solvable_cells()
         return solution_history_step

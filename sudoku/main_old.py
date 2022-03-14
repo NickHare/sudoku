@@ -2,7 +2,7 @@ from solver.board_solver import BoardSolver
 from core.board import Board
 from tests.sudoku.core.board_data import BoardData
 
-b = Board(BoardData.VALID_PARTIAL_BOARD_ARGS[5])
+b = Board(BoardData.VALID_PARTIAL_BOARD_ARGS[8])
 # sb = SudokuBoard.board_from_numbers(data.TEST_SUDOKU_BOARD)
 print("Starting Board...")
 print(b)
@@ -20,6 +20,6 @@ while not b.is_completed():
     print('--------')
     print(f'Step: {step}')
     print(f'Solution Step: {solution_cells}')
-    print(f'Valid Board: {b.conflicts}')
+    print(f'Valid Board: {b.is_valid()}')
     print('--------')
 print(b)
