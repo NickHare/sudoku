@@ -17,8 +17,8 @@ class Conflict:
         Conflict.validate_conflict_args(group_type, group_num, conflict_value, conflict_positions)
         self.group_type = group_type
         self.group_num = group_num
-        self.conflict_value = conflict_value
-        self.conflict_positions = sorted(conflict_positions)
+        self.value = conflict_value
+        self.positions = sorted(conflict_positions)
 
     def __eq__(self, other: 'Conflict') -> bool:
         is_equal = True
@@ -26,14 +26,14 @@ class Conflict:
             is_equal = False
         if self.group_num != other.group_num:
             is_equal = False
-        if self.conflict_value != other.conflict_value:
+        if self.value != other.value:
             is_equal = False
-        if sorted(self.conflict_positions) != sorted(other.conflict_positions):
+        if sorted(self.positions) != sorted(other.positions):
             is_equal = False
         return is_equal
 
     def __str__(self):
-        return f'{self.group_type} {self.group_num} - {self.conflict_value}: {self.conflict_positions}'
+        return f'{self.group_type} {self.group_num} - {self.value}: {self.positions}'
 
     def __repr__(self) -> str:
         return self.__str__()
