@@ -1,0 +1,76 @@
+*, *::before, *::after{
+    box-sizing: border-box;
+}
+
+:root{
+    --large-gap-size: 0.75vmin;
+    --small-gap-size: calc(0.75 * var(--large-gap-size));
+    --cell-size: 7vmin;
+    --cell-font-size: 5vmin;
+    --box-size: calc(3 * var(--cell-size) + 2 * var(--small-gap-size));
+    --board-size: calc(3 * var(--box-size) + 4 * var(--large-gap-size));
+    --config-size: calc(100vmin - 5vmin - var(--board-size));
+}
+
+body{
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+h1{
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 0;
+    background-color: rgb(150, 175, 255);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border-color: #444;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-left-style: solid;
+    border-width: var(--large-gap-size);
+}
+
+/* main{
+    width: var(--board-size);
+}
+
+section{
+} */
+.container{
+    display: flex;
+    align-items: flex-start;
+}
+
+.sudoku-board{
+    background-color: #444;
+    display: grid;
+    grid-template-rows: repeat(3, var(--box-size));
+    grid-template-columns: repeat(3, var(--box-size));
+    gap: var(--large-gap-size);
+    padding: var(--large-gap-size);
+    width: var(--board-size);
+    height: var(--board-size);
+}
+
+.sudoku-box{
+    background-color: #AAA;
+    display: grid;
+    grid-template-rows: repeat(3, var(--cell-size));
+    grid-template-columns: repeat(3, var(--cell-size));
+    gap: var(--small-gap-size);
+}
+
+.sudoku-cell{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #EEE;
+    font-size: var(--cell-font-size);
+}
+
+.sudoku-config{
+    background-color: #444;
+    padding: var(--large-gap-size);
+    width: var(--config-size);
+}
