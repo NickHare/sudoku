@@ -4,10 +4,11 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: './index.js',
+    entry: './js/index.js',
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: 'bundle.js',
+        library: 'App',
     },
     plugins: [
         new CleanWebpackPlugin(),
@@ -15,7 +16,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Sudoku',
             filename: 'index.html',
-            template: './index.html',
+            template: './html/index.html',
         }),
     ],
     module: {
