@@ -37,7 +37,7 @@ module.exports = {
     mode: 'development',
     devtool: 'source-map',
     devServer: {
-        watchFiles: ['index.html'],
+        watchFiles: ['html/index.html'],
         compress: true,
         port: 9000,
     },

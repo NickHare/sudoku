@@ -101,7 +101,7 @@ section{
 .sudoku-cell:focus, .sudoku-cell:focus-visible, .sudoku-cell:focus-within{
     border: var(--blue) solid var(--small-gap-size);
     background-color: var(--light-blue);
-    outline: none;
+    outline: var(--blue);
 }
 
 /*
