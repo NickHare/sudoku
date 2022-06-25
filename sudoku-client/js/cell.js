@@ -19,6 +19,7 @@ export class Cell{
     static candidatesCellClassName = "sudoku-cell-candidates";
     static setCellClassName = "sudoku-cell-set";
     static lockedCellClassName = "sudoku-cell-locked";
+    static candidateValueClassName = 'sudoku-cell-candidate';
 
     static emptyCellState = "EMPTY";
     static candidatesCellState = "CANDIDATES";
@@ -26,47 +27,65 @@ export class Cell{
     static lockedCellState = "LOCKED";
     static cellStates = ["EMPTY", "CANDIDATES", "SET", "LOCKED"];
 
+    static cellStateClassMap = {
+        [Cell.emptyCellState]: Cell.emptyCellClassName,
+        [Cell.candidatesCellState]: Cell.candidatesCellClassName,
+        [Cell.setCellState]: Cell.setCellClassName,
+        [Cell.lockedCellState]: Cell.lockedCellClassName
+    };
     
     static validate = validate;
     static cellStateValidator = (value, options, key, attributes) => {
         let cellValue = attributes.value;
         let cellCandidates = attributes.candidates;
         let cellElement = attributes.element;
+        let cellElementClasses = DomUtils.getElementClasses(cellElement);
+        let cellElementChildNodes = DomUtils.getElementChildNodes(cellElement);
         let cellState = value;
         let messages = []
 
+        // Validate cell value
         if (validate.isDefined(cellValue) && [this.emptyCellState, this.candidatesCellState].includes(cellState)){
-            messages.push(`Cell property 'state' is invalid. Property 'value' must not be defined if Cell is in ${Cell.cellState} state. state: ${cellState}, value: ${cellValue}`);
+            messages.push(`Cell property 'state' is invalid. Property 'value' must not be defined if Cell is in ${cellState} state. state: ${cellState}, value: ${cellValue}`);
         }
-        
         if (!validate.isDefined(cellValue) && [this.setCellState, this.lockedCellState].includes(cellState)){
-            messages.push(`Cell property 'state' is invalid. Property 'value' must be defined if Cell is in ${Cell.cellState} state. state: ${cellState}, value: ${cellValue}`);
+            messages.push(`Cell property 'state' is invalid. Property 'value' must be defined if Cell is in ${cellState} state. state: ${cellState}, value: ${cellValue}`);
         }
 
+        // Validate cell candidates
         if (!validate.isEmpty(cellCandidates) && [this.setCellState, this.lockedCellState].includes(cellState)){
-            messages.push(`Cell property 'state' is invalid. Property 'candidates' must be empty if Cell is in ${Cell.cellState} state. state: ${cellState}, candidates: ${JSON.stringify(cellCandidates)}`);
+            messages.push(`Cell property 'state' is invalid. Property 'candidates' must be empty if Cell is in ${cellState} state. state: ${cellState}, candidates: ${cellCandidates}`);
         }
 
-        if (!cellElement.classList.contains(this.cellClassName)){
-            messages.push(`Cell property 'state' is invalid. Property 'element.classList' must contain ${this.cellClassName} class. element.classList: ${cellElement.classList.value}`);
+        // Validate cell class
+        if (!cellElementClasses.includes(this.cellClassName)){
+            messages.push(`Cell property 'state' is invalid. Property 'element.classList' must contain ${this.cellClassName} class. element.classList: ${cellElementClasses}`);
+        }
+        if (!cellElementClasses.includes(Cell.cellStateClassMap[cellState])){
+            messages.push(`Cell property 'state' is invalid. Property 'element.classList' must contain ${Cell.cellStateClassMap[cellState]} class if Cell is in ${cellState}. element.classList: ${cellElementClasses}`);
         }
 
+        // Validate element DOM
         if (cellState == this.emptyCellState){
-            if (cellElement.childNodes.length > 0){
-                messages.push(`Cell property 'state' is invalid. Property 'element.childNodes' must be empty if Cell is in ${Cell.cellState} state. state: ${cellState}, element.childNodes: ${JSON.stringify(cellElement.childNodes)}`);
+            if (cellElementChildNodes.length > 0){
+                messages.push(`Cell property 'state' is invalid. Property 'element.childNodes' must be empty if Cell is in ${cellState} state. state: ${cellState}, element.childNodes: ${cellElementChildNodes.map(node => DomUtils.isTextNode(node)? JSON.stringify(node.textContent.trim()) : node.tagName)}`);
             }
 
-            let classList = DomUtils.getElementClasses(cellElement);
-            let nonEmptyClasses = [Cell.setCellClassName, Cell.candidatesCellClassName, Cell.lockedCellClassName];
-            if (classList.some(className => nonEmptyClasses.includes(className))){
-                messages.push(`Cell property 'state' is invalid. Property 'element.classList' must not contain ${nonEmptyClasses.join(", ")} if Cell is in ${Cell.cellState} state. state: ${cellState}, element.classList: ${JSON.stringify(cellElement.classList)}`)
+            let nonEmptyStateClasses = this.cellStates.filter(state => state != this.emptyCellState);
+            if (cellElementClasses.some(className => nonEmptyStateClasses.includes(className))){
+                messages.push(`Cell property 'state' is invalid. Property 'element.classList' must not contain ${nonEmptyStateClasses} if Cell is in ${cellState} state. state: ${cellState}, element.classList: ${cellElementClasses}`);
             }
         }
 
         if (cellState == this.setCellState){
-            if (cellElement.childNodes.length != 1){
-                // messages.push(`Cell property 'state' is invalid. Property 'element.childNodes' must be empty if Cell is in ${Cell.cellState} state. state: ${cellState}, element.childNodes: ${JSON.stringify(cellElement.childNodes)}`);
+            if (cellElementChildNodes.length != 1 || cellElementChildNodes[0].textContent < Cell.minVal || cellElementChildNodes[0].textContent > Cell.maxVal){
+                messages.push(`Cell property 'state' is invalid. Property 'element.childNodes' must have 1 childNode containing a number between 1 and 9 inclusive if Cell is in ${cellState} state. state: ${cellState}, element.childNodes: ${cellElementChildNodes.map(node => DomUtils.isTextNode(node)? JSON.stringify(node.textContent.trim()) : node.tagName)}}`);
             }
+            
+            let nonSetStateClasses = this.cellStates.filter(state => state != this.setCellState);
+            // if (){
+            //     messages.push(`Cell property 'state' is invalid. Property 'element.childNodes' must be empty if Cell is in ${cellState} state. state: ${cellState}, element.childNodes: ${cellElementChildNodes.map(node => DomUtils.isTextNode(node)? JSON.stringify(node.textContent.trim()) : node.tagName)}}`);
+            // }
         }
 
         return messages;
@@ -110,31 +129,31 @@ export class Cell{
         },
         candidates: {
             presence: {
-                message: value => `Cell property 'candidates' is not present. Property must be an array of up to ${Cell.maxVal} integers between ${Cell.minVal} and ${Cell.maxVal}. candidates: ${JSON.stringify(value)}`,
+                message: value => `Cell property 'candidates' is not present. Property must be an array of up to ${Cell.maxVal} integers between ${Cell.minVal} and ${Cell.maxVal}. candidates: ${value}`,
             },
             type: {
                 type: values => validate.isArray(values) && !values.some(value => !validate.isInteger(value) || value < Cell.minVal || value > Cell.maxVal),
-                message: value => `Cell property 'candidates' is not a valid type. Property must be an array of up to ${Cell.maxVal} integers between ${Cell.minVal} and ${Cell.maxVal}. candidates: ${JSON.stringify(value)}, type: ${value.constructor.name}`,
+                message: value => `Cell property 'candidates' is not a valid type. Property must be an array of up to ${Cell.maxVal} integers between ${Cell.minVal} and ${Cell.maxVal}. candidates: ${value}, type: ${value.constructor.name}`,
             },
             length: {
                 minimum: 0,
                 maximum: 9,
-                message: value => `Cell property 'candidates' does not have a valid length. Property must be an array of up to ${Cell.maxVal} integers between ${Cell.minVal} and ${Cell.maxVal}. candidates: ${JSON.stringify(value)}`,
+                message: value => `Cell property 'candidates' does not have a valid length. Property must be an array of up to ${Cell.maxVal} integers between ${Cell.minVal} and ${Cell.maxVal}. candidates: ${value}`,
             },
         },
         element: {
             presence: {
-                message: value => `Cell property 'element' is not valid type. Property must be a DOMElement. element: ${JSON.stringify(value)}`,
+                message: value => `Cell property 'element' is not valid type. Property must be a DOMElement. element: ${value}`,
             },
             type: {
                 type: value => validate.isDomElement(value),
-                message: value => `Cell property 'element' is not valid type. Property must be a DOMElement representing the cell. element: ${JSON.stringify(value)}, type: ${value.constructor.name}`,
+                message: value => `Cell property 'element' is not valid type. Property must be a DOMElement representing the cell. element: ${value}, type: ${value.constructor.name}`,
             },
         },
         state: {
             type: {
-                type: "string",
-                message: value => `Cell property 'state' is not a valid type. Property must be a string containing one of the following values: ${Cell.cellStates.join(", ")}. state: ${value}, type: ${value.constructor.name}`,
+                type: value => validate.isString(value) && Cell.cellStates.includes(value),
+                message: value => `Cell property 'state' is not a valid type. Property must be a string containing one of the following values: ${Cell.cellStates}. state: ${value}, type: ${value.constructor.name}`,
             },
             cellState: true,
         },
@@ -258,6 +277,7 @@ export class Cell{
     }
 
     isEmpty(){
+        console.log(this);
         return this.state == Cell.emptyCellState;
     }
     
@@ -293,14 +313,8 @@ export class Cell{
                 index++;
             }
             this.candidates.splice(index, 0, value);
-
-            let classNames = DomUtils.getElementClassNames();
-            if (classNames.includes(Cell.candidatesCellClassName)){
-
-            }else{
-
-            }
-            this.element.insertBefore();
+            let candidateValue = DomUtils.createElement('div', [Cell.candidateValueClassName]);
+            DomUtils.addElementChildNodeBefore(this.element, candidateValue, index)
         }
     }
 
@@ -308,8 +322,12 @@ export class Cell{
         if (candidates != null && (!Array.isArray(candidates) || (candidates.some(val => val < Cell.minVal && val > Cell.maxVal) || (new Set(candidates)).size != candidates.length))){
             throw new Error(`Cell arguments 'candidates' is invalid. Argument must be null or an array of unique candidate values. candidates: ${candidates}`);
         }
+        this.state = Cell.candidatesCellState;
+        this.value = null;
         this.candidates = candidates.sort();
-        return this.candidates;
+        DomUtils.setElementClasses(this.element, [Cell.cellClassName, Cell.candidatesCellClassName]);
+        DomUtils.removeAllElementChildNodes(this.element);
+        DomUtils.addElementChileNodes(this.element, candidates.map(candidate => DomUtils.createElement('div', [Cell.candidateValueClassName])));
     }
 
 }

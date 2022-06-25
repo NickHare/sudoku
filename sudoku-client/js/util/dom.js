@@ -28,23 +28,39 @@ export class DomUtils{
     }
 
     static addElementClasses(element, classNames){
-        classNames.forEach(className => element.classList.add(className));
+        classNames?.forEach(className => element.classList.add(className));
         return element;
     }
     
     static removeElementClass(element, className){
-        element.classList.remove(className);
+        element?.classList?.remove(className);
         return element;
     }
     
     static removeElementClasses(element, classNames){
-        classNames.forEach(className => element.classList.remove(className));
+        classNames?.forEach(className => element.classList.remove(className));
         return element;
     }
 
     static removeAllElementClasses(element){
-        element.classList.forEach(className => element.classList.remove(className));
+        element?.classList?.forEach(className => element.classList.remove(className));
         return element;
+    }
+
+    static getElementDataset(element){
+        return element?.dataset;
+    }
+
+    static getElemenetDatasetProperty(element, propertyName){
+        return element?.dataset?.[propertyName];
+    }
+
+    static setElemenetDatasetPropery(element, propertyName, propertyValue){
+        if (element?.dataset == null || propertyName == null || propertyValue == null){
+            return null;
+        }
+        
+
     }
     
     static createElement(tag, classList=[], childList=[]){
@@ -75,6 +91,10 @@ export class DomUtils{
         return element;
     }
 
+    static addElementChildNodeBefore(element, childNode, index){
+        return element.insertBefore(childNode, element.childNodes[index]);
+    }
+
     static addElementChileNodes(element, childNodes){
         childNodes.forEach(child => element.appendChild(child));
         return element;
@@ -90,7 +110,7 @@ export class DomUtils{
         return element;
     }
 
-    static removeAllElementChildNodes(element, childNodes){
+    static removeAllElementChildNodes(element){
         while (element.hasChildNodes()){
             element.removeChild(element.firstChild);
         }
