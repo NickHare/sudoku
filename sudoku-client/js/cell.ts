@@ -1,7 +1,7 @@
 import { Value, Row, Col } from "./types";
 import { DomUtils } from "./util/dom";
 import { KeyUtils } from "./util/keys";
-// import { validate } from "validate.js";
+import Joi from "joi";
 
 type CellState = "EMPTY" | "CANDIDATES" | "SET" | "LOCKED";
 
@@ -47,6 +47,15 @@ export class Cell{
     } as Record<CellState, string>;
     //Type Assertion used because of bug issue described in https://stackoverflow.com/questions/58760022/computed-property-name-is-not-assignable-to-record-type
     //TLDR - Record types widen when using computed name property cause a compiler type error
+
+    static cellSchemaValidator = Joi.object({
+        row: Joi.number().required().min(0).max(8),
+        col: Joi.number().required().min(0).max(8),
+        value: Joi.number().required().min(1).max(9),
+        candidates: Joi.array(),
+        element: "",
+        state: "",
+    });
 
     static getAllCellElements(): Element[]{
         return DomUtils.getElementsByClass(Cell.cellClassName); 
@@ -135,24 +144,6 @@ export class Cell{
     // }
 
     constructor(row: Row, col: Col, state: CellState, value?: Value, candidates?: Value[]){
-        // if (typeof(row) != "number" || row < Cell.minRow || row > Cell.maxRow){
-        //     throw new Error(`Cell argument 'row' is invalid. Argument must be a number between ${Cell.minRow} and ${Cell.maxRow} indicating the cell row number. row: ${row}`);
-        // }
-        // if (typeof(col) != "number" || col < Cell.minCol || col > Cell.maxCol){
-        //     throw new Error(`Cell argument 'col' is invalid. Argument must be a number between ${Cell.minCol} and ${Cell.maxCol} indicating the cell column number. col: ${col}`);
-        // }
-        // if (value != null && typeof(value) != "number" && (value < Cell.minVal && value > Cell.maxVal)){
-        //     throw new Error(`Cell argument 'value' is invalid. Argument must be null or a number between ${Cell.minVal} and ${Cell.maxVal} indicating the cell value. value: ${value}`);
-        // }
-        // if (typeof(locked) != "boolean"){
-        //     throw new Error(`Cell argument 'locked' is invalid. Argument must be a boolean. candidates: ${candidates}`);
-        // }
-        // if (!Array.isArray(candidates) || candidates.some(val => val < Cell.minVal && val > Cell.maxVal) || new Set(candidates).size != candidates.length){
-        //     throw new Error(`Cell argument 'candidates' is invalid. Argument must be null or an array of unique candidate values. candidates: ${candidates}`);
-        // }
-        // if (value != null && candidates != null){
-        //     throw new Error(`Cell state is invalid. Properties 'value' and 'candidates' can not both be not null. value: ${value}, candidates: ${candidates}`);
-        // }
         this.row = row;
         this.col = col;
         this.value = value ?? null;
