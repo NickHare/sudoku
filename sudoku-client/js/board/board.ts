@@ -1,5 +1,5 @@
-import { Row, Col, Value } from "./types";
-import { Cell } from "./cell";
+import { Row, Col, Value } from "root";
+import { Cell } from "cell";
 import Joi from "joi";
 
 export class Board{
