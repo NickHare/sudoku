@@ -17,7 +17,7 @@ export class DomUtils{
     }
    
     static setElementClasses(element: HTMLElement, classNames: string[]): HTMLElement{
-        element.classList.forEach(className => element.classList.remove(className));
+        element.className = "";
         classNames.forEach(className => element.classList.add(className));
         return element;
     }
@@ -75,7 +75,7 @@ export class DomUtils{
     }
     
     static createElement(tag: string, classList: string[]=[], childList: Node[]=[]): HTMLElement{
-        let element = document.createElement(tag);
+        const element = document.createElement(tag);
         classList.forEach(className => element.classList.add(className));
         childList.forEach(child => element.appendChild(child));
         return element;
@@ -121,6 +121,11 @@ export class DomUtils{
         while (element.firstChild != null && element.firstChild != undefined){
             element.removeChild(element.firstChild);
         }
+        return element;
+    }
+
+    static focusElement(element: HTMLElement): HTMLElement{
+        element.focus();
         return element;
     }
 }
