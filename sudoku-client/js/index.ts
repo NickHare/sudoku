@@ -1,9 +1,11 @@
 import "../css/main.css";
-import {Cell} from "./cell";
-import {DomUtils} from "./util/dom";
+import { Row, Col, Value } from "./types";
+import { Cell } from "cell";
+import { Board } from "board";
+import { CellController } from "./cell/cell-controller";
+import { BoardController } from "./board/board-controller";
 
+const boardController: BoardController = new BoardController();
+const cellController: CellController = new CellController(boardController.board);
 
-// Cell.registerEventListeners();
-// let c = new Cell(0, 3, null, [1, 2]);
-// console.log(c);
-export {Cell, DomUtils};
+export { Row, Col, Value, Board, Cell, boardController, cellController};
