@@ -42,6 +42,12 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.js'],
+        alias: {
+            root: path.resolve(__dirname, 'js'),
+            utils: path.resolve(__dirname, 'js/utils'),
+            cell: path.resolve(__dirname, 'js/cell'),
+            board: path.resolve(__dirname, 'js/board'),
+        },
     },
     mode: 'development',
     devtool: 'source-map',
