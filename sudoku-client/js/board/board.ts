@@ -9,6 +9,15 @@ export class Board{
         this.cellArray = cellArray;
     }
 
+    static fromJsonArray(jsonArray: (Value | null)[][]){
+        const cellArray: Cell[][] = jsonArray.map((jsonRow: (Value | null)[], row: Row): Cell[] =>{
+            return jsonRow.map((jsonCell: (Value | null), col: Col): Cell => {
+                return jsonCell? new Cell(row, col, Cell.setCellState, jsonCell) : new Cell(row, col, Cell.emptyCellState);
+            });
+        });
+        return new Board(cellArray);
+    }
+
     getCell(row: Row, col:Col): Cell{
         return this.cellArray[row][col];
     }

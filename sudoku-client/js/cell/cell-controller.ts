@@ -39,7 +39,7 @@ export class CellController{
             // console.log(`Handling MouseEvent: cell: ${cell}`);
             CellView.focusCell(cell);
             return;
-        }
+        };
     }
 
     #initCellKeyEventHandler(cell: Cell): (event: Event) => void{
@@ -57,11 +57,11 @@ export class CellController{
                 }else{
                     this.#handleDigitKey(cell, key);
                 }
-            } else if (KeyUtils.isBackspace(keyboardEvent)){
-                this.#handleBackspace(cell, key);
+            } else if (KeyUtils.isBackspaceKey(keyboardEvent)){
+                this.#handleBackspace(cell);
             }
             return;
-        }
+        };
     }
 
     #handleArrowKey(cell: Cell, key: string): void{
@@ -115,7 +115,7 @@ export class CellController{
         return;
     }
 
-    #handleBackspace(cell: Cell, key: string): void{
+    #handleBackspace(cell: Cell): void{
         cell.clearCell();
         CellView.renderCell(cell);        
         return;

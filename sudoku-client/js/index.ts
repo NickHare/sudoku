@@ -7,5 +7,6 @@ import { BoardController } from "./board/board-controller";
 
 const boardController: BoardController = new BoardController();
 const cellController: CellController = new CellController(boardController.board);
+cellController.renderAllCells();
 
 export { Row, Col, Value, Board, Cell, boardController, cellController};
