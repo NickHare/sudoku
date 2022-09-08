@@ -10,6 +10,10 @@ def lambda_handler(event, context):
     errors = EventHandler.validate_event(body)
     if errors:
         print("Errors!")
-        return json.dumps(EventHandler.handle_errors(errors))
+        resp = EventHandler.handle_errors(errors)
+        print(resp)
+        return resp
     print("No Errors!")
-    return json.dumps(EventHandler.handle_event(body))
+    resp = EventHandler.handle_event(body)
+    print(resp)
+    return resp

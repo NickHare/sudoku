@@ -13,7 +13,7 @@ from sudoku.solver.boxed_pair import BoxedPair
 
 class SudokuJSONEncoder(json.JSONEncoder):
     def default(self, obj):
-        if type(obj) in [Cell, Conflict, CellCandidates, ]:
+        if type(obj) in [Cell, Conflict, CellCandidates]:
             return obj.__dict__
         elif type(obj) in [NakedPair, HiddenPair, PointingPair, BoxedPair]:
             json = obj.__dict__
