@@ -60,4 +60,5 @@ class EventHandler:
             response['body']['candidates'] = json.loads(json.dumps(candidates, cls=SudokuJSONEncoder))
             response['body']['removedCandidates'] = json.loads(json.dumps(solver.removed_candidates, cls=SudokuJSONEncoder))
             response['body']['']
+        # ToDo: Add solution Cells.
         return response

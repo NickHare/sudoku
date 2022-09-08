@@ -1,6 +1,6 @@
 import json
 
-from sudoku.api.event_validator import EventHandler
+from sudoku.api.event_handler import EventHandler
 
 
 def lambda_handler(event, context):
