@@ -21,6 +21,8 @@
 
     --light-blue: rgb(150, 175, 255);
     --blue: rgb(50, 100, 255);
+    --red: rgb(255, 100, 50);
+    --green: rgb(50, 255, 100);
 }
 
 body{
@@ -96,6 +98,15 @@ section{
     justify-content: center;
     font-size: var(--candidate-font-size);
     font-weight: bold;
+}
+
+.sudoku-cell-candidate-removed{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--candidate-font-size);
+    font-weight: bold;
+    color: var(--red);
 }
 
 .sudoku-cell:focus, .sudoku-cell:focus-visible, .sudoku-cell:focus-within{

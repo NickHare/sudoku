@@ -10,6 +10,7 @@ export class CellView{
     static setCellClassName: string = "sudoku-cell-set";
     static lockedCellClassName: string = "sudoku-cell-locked";
     static candidateValueClassName: string = 'sudoku-cell-candidate';
+    static removedCandidateValueClassName: string = 'sudoku-cell--removed-candidate';
 
     static setCellPropertyName = "value";
     static candidateCellPropertyName = "candidateValue";
@@ -25,7 +26,7 @@ export class CellView{
 
 
     static #getAllCellElements(): Element[]{
-        return DomUtils.getElementsByClass(CellView.cellClassName); 
+        return DomUtils.getElementsByClass(CellView.cellClassName);
     }
 
     static #getCellElement(cell: Cell): HTMLElement{
@@ -67,6 +68,16 @@ export class CellView{
         }
         return;
     }
+
+    // static removeCellCandidateValue(cell: Cell, value: Value){
+    //     const element: HTMLElement = CellView.#getCellElement(cell);
+    //     let candidate: HTMLElement = DomUtils.getElementChildNodes(element).find((candidateNode: Node): boolean => {
+    //         const childElement: HTMLElement = candidateNode as HTMLElement;
+    //         return DomUtils.getElemenetDatasetProperty(childElement, CellView.candidateCellPropertyName) == value.toString();
+    //     }) as HTMLElement;
+    //     candidate = DomUtils.setElementClasses(candidate, [CellView.removedCandidateValueClassName]);
+    //     return;
+    // }
 
     static #renderEmptyCell(element: HTMLElement): void{
         DomUtils.removeAllElementChildNodes(element);

@@ -1,57 +1,61 @@
 import { Row, Col, Value } from "..";
-import { Cell, CellState } from "cell";
-import { Board } from "board";
+import { Cell, CellState, CellView } from "cell";
+import { Board, BoardView } from "board";
 import { KeyUtils } from "utils";
 
 export class BoardController{
     board: Board;
     test: null | string;
 
-    constructor(){
-        this.board = BoardController.#initTestBoard();
+    constructor(board: Board){
+        this.board = board;
+        this.#initBoardEventListeners();
         this.test = null;
     }
 
-    static #initEmptyCellBoard(): Board{
-        const cellArray: Cell[][] = [];
-        for(let i = Cell.minRow; i <= Cell.maxRow; i++){
-            let row: Cell[] = [];
-            for(let j = Cell.minCol; j <= Cell.maxCol; j++){
-                let c: Cell = new Cell(i as Row, j as Col, "EMPTY");
-                row.push(c);
-            }
-            cellArray.push(row);
-        }
-        return new Board(cellArray);
+    #initBoardEventListeners(): void{
+        const listener: (event: Event) => void = this.#boardKeyEventHandler();
+        const listeners: ((event: Event) => void)[][] = this.board.cellArray
+        .map((cellRow: Cell[]): ((event: Event) => void)[] => {
+            return cellRow.map((cell: Cell): (event: Event) => void => {
+                return this.#cellKeyEventHandler(cell);
+            });
+        });
+
+        BoardView.registerBoardEventListener("keydown", listener);
+        listeners.forEach((listenerRow: ((event: Event) => void)[], row: Row): void => {
+            listenerRow.forEach((listener: (event: Event) => void, col: Col): void => {
+                CellView.registerCellEventListener(this.board.getCell(row, col), "keydown", listener);
+                return;
+            });
+        });
+        return;
     }
 
-    static #initTestBoard(){
-        const jsonArray: (Value | null)[][] = [
-            [null,null,null,7,9,8,null,null,null],
-            [null,null,null,null,1,null,2,5,null],
-            [null,null,null,null,2,null,3,null,null],
-            [7,null,9,null,null,null,null,null,2],
-            [null,null,null,null,null,null,null,7,null],
-            [null,null,8,null,null,1,null,9,null],
-            [null,5,null,null,null,null,null,null,6],
-            [2,null,null,null,null,6,null,null,null],
-            [null,1,null,8,null,null,null,null,null]
-        ];
-        return Board.fromJsonArray(jsonArray);
-    }
-
-    #initBoardKeyEventHandler(): (event: Event) => void {
+    #boardKeyEventHandler(): (event: Event) => void {
         return (event: Event) => {
             const keyboardEvent: KeyboardEvent = event as KeyboardEvent;
             const key: string = keyboardEvent.key;
 
-            if (KeyUtils.isEnterKey(keyboardEvent)){
-                this.handleEnterKey();
+            if (KeyUtils.isEnterKey(keyboardEvent)) {
+                this.#handleEnterKey();
             }
         };
     }
 
-    handleEnterKey(): void{
+    #cellKeyEventHandler(cell: Cell): (event: Event) => void {
+        return (event: Event) => {
+            const keyboardEvent: KeyboardEvent = event as KeyboardEvent;
+            const key: string = keyboardEvent.key;
+
+            if (KeyUtils.isArrowKey(keyboardEvent)){
+                this.#handleArrowKey(cell, key);
+            }
+        };
+    }
+
+
+    #handleEnterKey(): void{
         const jsonPayload = {
             board: this.board.cellArray.map((cellRow: Cell[]): (Value | null)[] => {
                 return cellRow.map((cell: Cell): (Value | null) => {
@@ -71,8 +75,51 @@ export class BoardController{
         fetch(url, options)
         .then((res: Response): Promise<any> => res.json())
         .then((res): void => {
-            this.test = res.body;
+            this.test = res;
+            res.candidates.forEach((candidate) => {
+                this.board.setCellCandidates(candidate.pos.row, candidate.pos.col, candidate.candidate_values);
+                CellView.renderCell(this.board.getCell(candidate.pos.row, candidate.pos.col));
+            });
+            // res.removedCandidates.forEach((removedCandidate): void => {
+            //     removedCandidate.eliminated_candidates.forEach((candidate): void => {
+            //         let cell = this.board.getCell(candidate.pos.row, candidate.pos.col);
+            //         if (cell.hasCandidates() && cell.isCandidate(candidate.val)){
+            //             CellView.removeCellCandidateValue(cell, candidate.val);
+            //         }
+            //     });
+            // });
         });
+        return;
+    }
+
+    #handleArrowKey(cell: Cell, key: string): void{
+        let delta_row: 0 | 1 | -1 = 0;
+        let delta_col: 0 | 1 | -1 = 0;
+        switch(key){
+            case "ArrowUp":
+                delta_row = -1;
+                break;
+            case "ArrowDown":
+                delta_row = 1;
+                break;
+            case "ArrowLeft":
+                delta_col = -1;
+                break;
+            case "ArrowRight":
+                delta_col = 1;
+                break;
+        }
+
+        let newRow: Row = cell.row + delta_row as Row;
+        newRow = (newRow > Cell.maxRow)? Cell.minRow as Row : newRow;
+        newRow = (newRow < Cell.minRow)? Cell.maxRow as Row : newRow;
+        
+        let newCol: Col = cell.col + delta_col as Col;
+        newCol = (newCol > Cell.maxCol)? Cell.minCol as Col : newCol;
+        newCol = (newCol < Cell.minCol)? Cell.maxCol as Col : newCol;
+
+        const newCell: Cell = this.board.getCell(newRow, newCol);
+        CellView.focusCell(newCell);
         return;
     }
 }

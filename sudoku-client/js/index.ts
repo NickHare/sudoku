@@ -5,8 +5,12 @@ import { Board } from "board";
 import { CellController } from "./cell/cell-controller";
 import { BoardController } from "./board/board-controller";
 
-const boardController: BoardController = new BoardController();
-const cellController: CellController = new CellController(boardController.board);
-cellController.renderAllCells();
+const board: Board = Board.initTestBoard();
+const boardController: BoardController = new BoardController(board);
+const cellControllerArray: CellController[][] = board.cellArray.map((cellRow: Cell[]): CellController[] => {
+    return cellRow.map((cell: Cell): CellController => {
+        return new CellController(cell);
+    });
+});
 
-export { Row, Col, Value, Board, Cell, boardController, cellController};
+export { Row, Col, Value, Board, Cell, board, boardController, cellControllerArray};

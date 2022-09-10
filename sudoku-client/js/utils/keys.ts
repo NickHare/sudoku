@@ -17,7 +17,7 @@ export class KeyUtils{
     }
 
     static isEnterKey(event: KeyboardEvent): boolean{
-        return event.key == KeyUtils.backspaceKey;
+        return event.key == KeyUtils.enterKey;
     }
     
     static isShiftActive(event: KeyboardEvent): boolean{
